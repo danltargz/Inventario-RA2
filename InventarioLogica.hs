@@ -29,17 +29,23 @@ addItem tempo item inv
 
 -- Remove um item do inventário
 -- Verifica se o ID existe antes de remover, se ele não existir, retorna erro
-removeItem :: UTCTime -> String -> Inventario -> Either String ResultadoOperacao
-removeItem tempo idItem inv =
-  case Map.lookup idItem inv of
-    Nothing ->
-      Left "Erro: item não encontrado no inventário."
-    Just itemRemovido ->
-      let novoInv = Map.delete idItem inv
-          logEntry = LogEntry tempo Remove
-            ("Item removido: " ++ nome itemRemovido ++ " (ID: " ++ idItem ++ ")")
-            Sucesso
-      in Right (novoInv, logEntry)
+removeItem :: UTCTime -> String -> Int -> Inventario -> Either String ResultadoOperacao
+removeItem tempo idItem qtd inv
+  | qtd <= 0 = Left "Erro: quantidade a remover deve ser positiva."
+  | otherwise =
+      case Map.lookup idItem inv of
+        Nothing -> Left "Erro: item não encontrado no inventário."
+        Just it ->
+          let atual = quantidade it
+          in if qtd > atual
+               then Left "Erro: estoque insuficiente."
+               else
+                 let it'    = it { quantidade = atual - qtd }
+                     inv'   = Map.insert idItem it' inv
+                     logEnt = LogEntry tempo Remove
+                               ("Removidas " ++ show qtd ++ " unidades do item " ++ idItem)
+                               Sucesso
+                 in Right (inv', logEnt)
 
 -- Atualiza a quantidade de um item no inventário
 -- Verifica se o item existe e se a quantidade não é negativa
