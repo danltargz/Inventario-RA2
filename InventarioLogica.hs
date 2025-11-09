@@ -39,4 +39,22 @@ removeItem tempo idItem inv =
           logEntry = LogEntry tempo Remove
             ("Item removido: " ++ nome itemRemovido ++ " (ID: " ++ idItem ++ ")")
             Sucesso
-      in Right (novoInv, logEntry)            
+      in Right (novoInv, logEntry)
+
+-- Atualiza a quantidade de um item no inventário
+-- Verifica se o item existe e se a quantidade não é negativa
+updateQty :: UTCTime -> String -> Int -> Inventario -> Either String ResultadoOperacao
+updateQty tempo idItem novaQtd inv
+  | novaQtd < 0 =
+      Left "Erro: quantidade inválida (menor que zero)."
+  | otherwise =
+      case Map.lookup idItem inv of
+        Nothing ->
+          Left "Erro: item não encontrado no inventário."
+        Just itemAntigo ->
+          let itemAtualizado = itemAntigo { quantidade = novaQtd }
+              novoInv = Map.insert idItem itemAtualizado inv
+              logEntry = LogEntry tempo Update
+                ("Atualizada quantidade do item " ++ idItem ++ " para " ++ show novaQtd)
+                Sucesso
+          in Right (novoInv, logEntry)      
