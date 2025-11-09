@@ -9,8 +9,12 @@ import InventarioDados
 import qualified Data.Map as Map
 import Data.Time (UTCTime)
 
+-- Tipo para simplificar o retorno das funções
 type ResultadoOperacao = (Inventario, LogEntry)
 
+-- Função para adicionar um novo item no inventário
+-- Não permite IDs duplicados
+-- Gera um log para indicar sucesso ou falha
 addItem :: UTCTime -> Item -> Inventario -> Either String ResultadoOperacao
 addItem tempo item inv
   | Map.member (itemID item) inv =
