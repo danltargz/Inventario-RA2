@@ -24,4 +24,19 @@ addItem tempo item inv
           logEntry = LogEntry tempo Add
             ("Item adicionado: " ++ nome item ++ " (ID: " ++ itemID item ++ ")")
             Sucesso
+      in Right (novoInv, logEntry)
+
+
+-- Remove um item do inventário
+-- Verifica se o ID existe antes de remover, se ele não existir, retorna erro
+removeItem :: UTCTime -> String -> Inventario -> Either String ResultadoOperacao
+removeItem tempo idItem inv =
+  case Map.lookup idItem inv of
+    Nothing ->
+      Left "Erro: item não encontrado no inventário."
+    Just itemRemovido ->
+      let novoInv = Map.delete idItem inv
+          logEntry = LogEntry tempo Remove
+            ("Item removido: " ++ nome itemRemovido ++ " (ID: " ++ idItem ++ ")")
+            Sucesso
       in Right (novoInv, logEntry)            
