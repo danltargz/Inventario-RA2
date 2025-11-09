@@ -17,13 +17,15 @@ type ResultadoOperacao = (Inventario, LogEntry)
 -- Gera um log para indicar sucesso ou falha
 addItem :: UTCTime -> Item -> Inventario -> Either String ResultadoOperacao
 addItem tempo item inv
+  | quantidade item < 0 =
+      Left "Erro: quantidade inicial inválida (menor que zero)."
   | Map.member (itemID item) inv =
       Left "Erro: item já existe no inventário."
   | otherwise =
-      let novoInv = Map.insert (itemID item) item inv
+      let novoInv  = Map.insert (itemID item) item inv
           logEntry = LogEntry tempo Add
-            ("Item adicionado: " ++ nome item ++ " (ID: " ++ itemID item ++ ")")
-            Sucesso
+                        ("Item adicionado: " ++ nome item ++ " (ID: " ++ itemID item ++ ")")
+                        Sucesso
       in Right (novoInv, logEntry)
 
 
