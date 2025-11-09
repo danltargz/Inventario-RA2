@@ -3,7 +3,7 @@
 module Main where
 
 import InventarioDados
-import InventarioLogica
+import qualified InventarioLogica as Logic
 
 import qualified Data.Map as Map
 import Data.Map (Map)
@@ -103,7 +103,7 @@ processCommand inv _lineLogs input =
           return inv
         Just qtd -> do
           let item = Item { itemID = iID, nome = nm, quantidade = qtd, categoria = catg }
-          case addItem now item inv of
+          case Logic.addItem now item inv of
             Left err -> do
               putStrLn $ "Falha: " ++ err
               let logE = LogEntry now Add ("Falha ao adicionar ID=" ++ iID) (Falha err)
@@ -116,20 +116,53 @@ processCommand inv _lineLogs input =
               return novoInv
 
     ("remover":xs) -> case xs of
+      (iID:qtdS:_) ->
+        case readMaybe qtdS :: Maybe Int of
+          Nothing -> do
+            putStrLn "Quantidade inválida. Uso: remover <itemID> [quantidade]"
+            return inv
+          Just qtd -> do
+            now <- getCurrentTime
+            case Logic.removeItem now iID qtd inv of
+              Left err -> do
+                putStrLn $ "Falha: " ++ err
+                let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID ++ " qtd=" ++ show qtd) (Falha err)
+                appendLog logE
+                return inv
+              Right (novoInv, logE) -> do
+                saveInventario novoInv
+                appendLog logE
+                putStrLn "Item removido com sucesso."
+                return novoInv
+
+                
+    
+      -- remove tudo
       (iID:_) -> do
         now <- getCurrentTime
-        case removeItem now iID inv of
-          Left err -> do
-            putStrLn $ "Falha: " ++ err
-            let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID) (Falha err)
+        case Map.lookup iID inv of
+          Nothing -> do
+            putStrLn "Falha: item não encontrado."
+            let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID ++ " (não encontrado)") (Falha "Item não encontrado")
             appendLog logE
             return inv
-          Right (novoInv, logE) -> do
-            saveInventario novoInv
-            appendLog logE
-            putStrLn "Item removido com sucesso."
-            return novoInv
-      _ -> putStrLn "Uso: remove <itemID>" >> return inv
+          Just it -> do
+            let qtd = quantidade it
+            case Logic.removeItem now iID qtd inv of
+              Left err -> do
+                putStrLn $ "Falha: " ++ err
+                let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID ++ " qtd=" ++ show qtd) (Falha err)
+                appendLog logE
+                return inv
+              Right (novoInv, logE) -> do
+                saveInventario novoInv
+                appendLog logE
+                putStrLn $ "Item removido (" ++ show qtd ++ " unidades)."
+                return novoInv
+    
+      _ -> putStrLn "Uso: remover <itemID> [quantidade]" >> return inv
+
+      
 
     ("atualizar":xs) -> case xs of
       (iID:qtdS:_) -> do
@@ -137,11 +170,11 @@ processCommand inv _lineLogs input =
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
             putStrLn "Quantidade inválida."
-            let logE = LogEntry now Update ("Tentativa de atualizar com quantidade inválida: " ++ qtdS) (Falha "Quantidade inválida")
+            let logE = LogEntry now Update ("Tentativa de update com quantidade inválida: " ++ qtdS) (Falha "Quantidade inválida")
             appendLog logE
             return inv
           Just novaQtd ->
-            case updateQty now iID novaQtd inv of
+            case Logic.updateQty now iID novaQtd inv of
               Left err -> do
                 putStrLn $ "Falha: " ++ err
                 let logE = LogEntry now Update ("Falha ao atualizar ID=" ++ iID) (Falha err)
@@ -154,6 +187,8 @@ processCommand inv _lineLogs input =
                 return novoInv
       _ -> putStrLn "Uso: atualizar <itemID> <novaQuantidade>" >> return inv
 
+
+      
     ("relatorio":_) -> do
       logs <- loadLogs
       putStrLn "=== Relatório básico ==="
