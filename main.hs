@@ -234,7 +234,7 @@ textoAjuda = unlines
   , "  remover <itemID>           - remove item (totalmente)"
   , "  atualizar <itemID> <q>     - atualiza quantidade para q (Int)"
   , "  listar                     - lista inventário em memória"
-  , "  relatorio                  - relatório básico de logs (erros)"
+  , "  report                  - relatório básico de logs (erros)"
   , "  sair                       - encerra o programa"
   ]
 
