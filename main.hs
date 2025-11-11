@@ -189,7 +189,7 @@ processCommand inv _lineLogs input =
 
 
       
-    ("relatorio":_) -> do
+    ("report":_) -> do
       logs <- loadLogs
       putStrLn "=== Relatório básico ==="
       putStrLn $ "Total de entradas de log: " ++ show (length logs)
