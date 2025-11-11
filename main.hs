@@ -229,7 +229,7 @@ logsErro = filter isErro
 textoAjuda :: String
 textoAjuda = unlines
   [ "Comandos disponíveis:"
-  , "  Ajuda                      - mostra esta ajuda"
+  , "  ajuda                      - mostra esta ajuda"
   , "  adicionar                  - adiciona um item (interativo)"
   , "  remover <itemID>           - remove item (totalmente)"
   , "  atualizar <itemID> <q>     - atualiza quantidade para q (Int)"
