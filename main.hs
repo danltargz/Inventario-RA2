@@ -21,9 +21,6 @@ inventarioFile = "Inventario.dat"
 auditoriaFile :: FilePath
 auditoriaFile = "Auditoria.log"
 
-
-
-
 -- funcao para carregar inventario do disco capturando excecoes e lidando com elas para evitar falhas
 loadInventario :: IO Inventario
 loadInventario = do
@@ -37,10 +34,6 @@ loadInventario = do
       | isDoesNotExistError e = return "empty"
       | otherwise             = return "empty"
       
-      
-      
-
-
 -- funcao para carregar os logs de auditoria lidando com arquivos vazios e ignorando linhas corrompidas. Separa os dados por linha
 loadLogs :: IO [LogEntry]
 loadLogs = do
@@ -49,25 +42,17 @@ loadLogs = do
   let ls = lines conteudo
   return $ catMaybes $ map (\l -> readMaybe l :: Maybe LogEntry) ls
 
-
-
-
 -- adiciona no final do ficheiro e usa show para serializacao
 appendLog :: LogEntry -> IO ()
 appendLog le = appendFile auditoriaFile (show le ++ "\n")
-
 
 -- pega o inventario(map) transforma em texto e grava no arquivo Inventario.dat
 saveInventario :: Inventario -> IO ()
 saveInventario inv = writeFile inventarioFile (show inv)
 
-
-
 -- exibe p sem salto de linha e le a linha do usuario, serve para perguntas e respostas
 prompt :: String -> IO String
 prompt p = putStr p >> hFlush stdout >> getLine
-
-
 
 -- processamento dos comandos
 processCommand :: Inventario -> [LogEntry] -> String -> IO Inventario
@@ -139,8 +124,6 @@ processCommand inv _lineLogs input =
                 putStrLn "Item removido com sucesso."
                 return novoInv
 
-                
-    
       -- remove tudo
       (iID:_) -> do
         now <- getCurrentTime
@@ -163,10 +146,7 @@ processCommand inv _lineLogs input =
                 appendLog logE
                 putStrLn $ "Item removido (" ++ show qtd ++ " unidades)."
                 return novoInv
-    
       _ -> putStrLn "Uso: remover <itemID> [quantidade]" >> return inv
-
-      
 
     ("atualizar":xs) -> case xs of
       (iID:qtdS:_) -> do
@@ -190,8 +170,6 @@ processCommand inv _lineLogs input =
                 putStrLn "Quantidade atualizada com sucesso."
                 return novoInv
       _ -> putStrLn "Uso: atualizar <itemID> <novaQuantidade>" >> return inv
-
-
       
     ("report":_) -> do
       logs <- loadLogs
@@ -201,23 +179,16 @@ processCommand inv _lineLogs input =
       putStrLn $ "Entradas de erro: " ++ show (length erros)
       mapM_ printLogEntry erros
       return inv
-
     _ -> putStrLn "Comando desconhecido. Digite 'ajuda' para ver comandos." >> return inv
     
-
-
 -- formata uma linha simples em um item usando os getters itemID, nome, quantidade e categoria
 printItem :: Item -> IO ()
 printItem it =
   putStrLn $ itemID it ++ " | " ++ nome it ++ " | qtd: " ++ show (quantidade it) ++ " | cat: " ++ categoria it
 
-
-
 -- formata um log entry para exibir timestamp, acaoo, detalhes e status
 printLogEntry :: LogEntry -> IO ()
 printLogEntry le = putStrLn $ show (timestamp le) ++ " - " ++ show (acao le) ++ " - " ++ detalhes le ++ " - " ++ show (status le)
-
-
 
 -- funcao que filtra log entry que status é Falha _
 logsErro :: [LogEntry] -> [LogEntry]
@@ -225,9 +196,6 @@ logsErro = filter isErro
   where
     isErro (LogEntry _ _ _ (Falha _)) = True
     isErro _                          = False
-
-
-
 
 -- Texto de ajuda
 textoAjuda :: String
@@ -242,8 +210,6 @@ textoAjuda = unlines
   , "  sair                       - encerra o programa"
   ]
 
-
--- loop principal
 -- repl é um loop recursivo que mantem o estado do inventario e le os comandos repetidas vezes
 repl :: Inventario -> [LogEntry] -> IO ()
 repl inv logs = do
