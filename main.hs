@@ -170,7 +170,7 @@ processCommand inv _lineLogs input =
                 appendLog logE
                 putStrLn "Quantidade atualizada com sucesso."
                 return novoInv
-      _ -> putStrLn "Uso: atualizar <itemID> <novaQuantidade>" >> return inv
+      _ -> putStrLn "Uso: update <itemID> <novaQuantidade>" >> return inv
 
     ("report":_) -> do
       logs <- loadLogs
