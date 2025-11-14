@@ -27,12 +27,12 @@ loadInventario = do
   conteudo <- catch (readFile inventarioFile) handler
   case readMaybe conteudo :: Maybe Inventario of
     Just inv -> return inv
-    Nothing  -> return Map.empty
+    Nothing -> return Map.empty
   where
     handler :: IOException -> IO String
     handler e
       | isDoesNotExistError e = return "empty"
-      | otherwise             = return "empty"
+      | otherwise = return "empty"
       
 -- funcao para carregar os logs de auditoria lidando com arquivos vazios e ignorando linhas corrompidas. Separa os dados por linha
 loadLogs :: IO [LogEntry]
@@ -59,22 +59,22 @@ processCommand :: Inventario -> [LogEntry] -> String -> IO Inventario
 processCommand inv _lineLogs input =
   case words input of
     [] -> putStrLn "" >> return inv
-    ("ajuda":_) -> do
+    ("help":_) -> do
       putStrLn textoAjuda
       return inv
 
-    ("sair":_) -> do
+    ("exit":_) -> do
       putStrLn "Saindo..."
       return inv
     
-    ("listar":_) -> do
+    ("list":_) -> do
       putStrLn "Inventário atual:"
       if Map.null inv
         then putStrLn "(vazio)"
         else mapM_ (printItem . snd) (Map.toList inv)
       return inv
 
-    ("adicionar":_) -> do
+    ("add":_) -> do
       now <- getCurrentTime
       iID <- prompt "ID do item: "
       nm  <- prompt "Nome: "
@@ -100,7 +100,7 @@ processCommand inv _lineLogs input =
               putStrLn "Item adicionado com sucesso."
               return novoInv
 
-    ("remover":xs) -> case xs of
+    ("remove":xs) -> case xs of
       (iID:qtdS:_) ->
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
@@ -148,7 +148,7 @@ processCommand inv _lineLogs input =
                 return novoInv
       _ -> putStrLn "Uso: remover <itemID> [quantidade]" >> return inv
 
-    ("atualizar":xs) -> case xs of
+    ("update":xs) -> case xs of
       (iID:qtdS:_) -> do
         now <- getCurrentTime
         case readMaybe qtdS :: Maybe Int of
@@ -183,8 +183,7 @@ processCommand inv _lineLogs input =
     
 -- formata uma linha simples em um item usando os getters itemID, nome, quantidade e categoria
 printItem :: Item -> IO ()
-printItem it =
-  putStrLn $ itemID it ++ " | " ++ nome it ++ " | qtd: " ++ show (quantidade it) ++ " | cat: " ++ categoria it
+printItem it = putStrLn $ itemID it ++ " | " ++ nome it ++ " | qtd: " ++ show (quantidade it) ++ " | cat: " ++ categoria it
 
 -- formata um log entry para exibir timestamp, acaoo, detalhes e status
 printLogEntry :: LogEntry -> IO ()
@@ -195,19 +194,19 @@ logsErro :: [LogEntry] -> [LogEntry]
 logsErro = filter isErro
   where
     isErro (LogEntry _ _ _ (Falha _)) = True
-    isErro _                          = False
+    isErro _ = False
 
 -- Texto de ajuda
 textoAjuda :: String
 textoAjuda = unlines
   [ "Comandos disponíveis:"
-  , "  ajuda                      - mostra esta ajuda"
-  , "  adicionar                  - adiciona um item (interativo)"
-  , "  remover <itemID>           - remove item (totalmente)"
-  , "  atualizar <itemID> <q>     - atualiza quantidade para q (Int)"
-  , "  listar                     - lista inventário em memória"
-  , "  report                  - relatório básico de logs (erros)"
-  , "  sair                       - encerra o programa"
+  , "  help                           - mostra esta ajuda"
+  , "  add                            - adiciona um item (interativo)"
+  , "  remove <itemID>                - remove a quantidade informada e, caso seja omitida, remove todas as unidades"
+  , "  update <itemID> <quantity>     - atualiza quantidade (Int)"
+  , "  list                           - lista inventário em memória"
+  , "  report                         - relatório básico de logs (erros)"
+  , "  exit                           - encerra o programa"
   ]
 
 -- repl é um loop recursivo que mantem o estado do inventario e le os comandos repetidas vezes
