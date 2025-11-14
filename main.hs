@@ -105,7 +105,7 @@ processCommand inv _lineLogs input =
       (iID:qtdS:_) ->
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
-            putStrLn "Quantidade inválida. Uso: remover <itemID> [quantidade]"
+            putStrLn "Quantidade inválida. Uso: remove <itemID> [quantidade]"
             now <- getCurrentTime
             appendLog (LogEntry now Remove
                          ("Tentativa de remover com quantidade inválida: " ++ qtdS ++ " para ID=" ++ iID)
@@ -147,7 +147,7 @@ processCommand inv _lineLogs input =
                 appendLog logE
                 putStrLn $ "Item removido (" ++ show qtd ++ " unidades)."
                 return novoInv
-      _ -> putStrLn "Uso: remover <itemID> [quantidade]" >> return inv
+      _ -> putStrLn "Uso: remove <itemID> [quantidade]" >> return inv
 
     ("update":xs) -> case xs of
       (iID:qtdS:_) -> do
