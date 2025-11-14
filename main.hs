@@ -204,7 +204,7 @@ processCommand inv _lineLogs input =
       putStrLn "\n==========================================\n"
       return inv
 
-    _ -> putStrLn "Comando desconhecido. Digite 'ajuda' para ver comandos." >> return inv
+    _ -> putStrLn "Comando desconhecido. Digite 'help' para ver comandos." >> return inv
 
 -- formata uma linha simples em um item usando os getters itemID, nome, quantidade e categoria
 printItem :: Item -> IO ()
@@ -253,5 +253,5 @@ main = do
   logs <- loadLogs
   putStrLn $ "Inventário carregado: " ++ show (Map.size inv) ++ " itens."
   putStrLn $ "Logs carregados: " ++ show (length logs)
-  putStrLn "Digite 'ajuda' para ver comandos."
+  putStrLn "Digite 'help' para ver comandos."
   repl inv logs
