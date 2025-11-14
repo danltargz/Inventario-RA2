@@ -170,7 +170,7 @@ processCommand inv _lineLogs input =
                 appendLog logE
                 putStrLn "Quantidade atualizada com sucesso."
                 return novoInv
-      _ -> putStrLn "Uso: atualizar <itemID> <novaQuantidade>" >> return inv
+      _ -> putStrLn "Uso: update <itemID> <novaQuantidade>" >> return inv
 
     ("report":_) -> do
       logs <- loadLogs
@@ -226,9 +226,8 @@ textoAjuda = unlines
   [ "Comandos disponíveis:"
   , "  help                       - mostra os comandos disponíveis"
   , "  add                        - adiciona um item (interativo)"
-  , "  remove <itemID>            - remove item (totalmente)"
-  , "  remove <itemID> <qtd>      - remove quantidade específica"
-  , "  update <itemID> <q>        - atualiza quantidade para q (int)"
+  , "  remove <itemID> <qtd>      - remove quantidade e, caso seja omitida a quantidade, remove a totalidade de itens"
+  , "  update <itemID> <q>        - atualiza quantidade (int)"
   , "  list                       - lista inventário em memória"
   , "  report                     - relatório completo de logs e análises"
   , "  exit                       - encerra o programa"
