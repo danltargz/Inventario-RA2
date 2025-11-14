@@ -239,7 +239,7 @@ repl :: Inventario -> [LogEntry] -> IO ()
 repl inv logs = do
   line <- prompt "inventario> "
   let trimmed = dropWhile (== ' ') line
-  if trimmed == "sair"
+  if trimmed == "exit"
     then putStrLn "Encerrando..." >> return ()
     else do
       novoInv <- processCommand inv logs trimmed
