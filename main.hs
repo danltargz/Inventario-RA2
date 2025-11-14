@@ -69,7 +69,7 @@ processCommand inv _lineLogs input =
       return inv
 
     ("list":_) -> do
-      putStrLn "InventÃ¡rio atual:"
+      putStrLn "Inventário atual:"
       if Map.null inv
         then putStrLn "(vazio)"
         else mapM_ (printItem . snd) (Map.toList inv)
@@ -83,8 +83,8 @@ processCommand inv _lineLogs input =
       catg <- prompt "Categoria: "
       case readMaybe qtdS :: Maybe Int of
         Nothing -> do
-          putStrLn "Quantidade invÃ¡lida."
-          let logE = LogEntry now Add ("Tentativa de adicionar com quantidade invÃ¡lida: " ++ qtdS) (Falha "Quantidade invÃ¡lida")
+          putStrLn "Quantidade inválida."
+          let logE = LogEntry now Add ("Tentativa de adicionar com quantidade inválida: " ++ qtdS) (Falha "Quantidade inválida")
           appendLog logE
           return inv
         Just qtd -> do
@@ -105,11 +105,11 @@ processCommand inv _lineLogs input =
       (iID:qtdS:_) ->
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
-            putStrLn "Quantidade invÃ¡lida. Uso: remover <itemID> [quantidade]"
+            putStrLn "Quantidade inválida. Uso: remover <itemID> [quantidade]"
             now <- getCurrentTime
             appendLog (LogEntry now Remove
-                         ("Tentativa de remover com quantidade invÃ¡lida: " ++ qtdS ++ " para ID=" ++ iID)
-                         (Falha "Quantidade invÃ¡lida"))
+                         ("Tentativa de remover com quantidade inválida: " ++ qtdS ++ " para ID=" ++ iID)
+                         (Falha "Quantidade inválida"))
             return inv
           Just qtd -> do
             now <- getCurrentTime
@@ -130,8 +130,8 @@ processCommand inv _lineLogs input =
         now <- getCurrentTime
         case Map.lookup iID inv of
           Nothing -> do
-            putStrLn "Falha: item nÃ£o encontrado."
-            let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID ++ " (nÃ£o encontrado)") (Falha "Item nÃ£o encontrado")
+            putStrLn "Falha: item não encontrado."
+            let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID ++ " (não encontrado)") (Falha "Item não encontrado")
             appendLog logE
             return inv
           Just it -> do
@@ -154,8 +154,8 @@ processCommand inv _lineLogs input =
         now <- getCurrentTime
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
-            putStrLn "Quantidade invÃ¡lida."
-            let logE = LogEntry now Update ("Tentativa de update com quantidade invÃ¡lida: " ++ qtdS) (Falha "Quantidade invÃ¡lida")
+            putStrLn "Quantidade inválida."
+            let logE = LogEntry now Update ("Tentativa de update com quantidade inválida: " ++ qtdS) (Falha "Quantidade inválida")
             appendLog logE
             return inv
           Just novaQtd ->
@@ -217,7 +217,7 @@ printLogEntry le = putStrLn $ show (timestamp le) ++ " - " ++ show (acao le) ++ 
 -- exibe historico de um item especifico
 printHistoricoItem :: (String, [LogEntry]) -> IO ()
 printHistoricoItem (itemId, entries) = do
-  putStrLn $ "\nItem: " ++ itemId ++ " (" ++ show (length entries) ++ " operaÃ§Ãµes)"
+  putStrLn $ "\nItem: " ++ itemId ++ " (" ++ show (length entries) ++ " operações)"
   mapM_ (\le -> putStrLn $ "  - " ++ show (acao le) ++ ": " ++ detalhes le ++ " [" ++ show (status le) ++ "]") entries
 
 -- Texto de ajuda
@@ -227,10 +227,10 @@ textoAjuda = unlines
   , "  help                       - mostra esta ajuda"
   , "  add                        - adiciona um item (interativo)"
   , "  remove <itemID>            - remove item (totalmente)"
-  , "  remove <itemID> <qtd>      - remove quantidade especÃ­fica"
-  , "  update <itemID> <q>        - atualiza quantidade para q (Int)"
-  , "  list                       - lista inventÃ¡rio em memÃ³ria"
-  , "  report                     - relatÃ³rio completo de logs e anÃ¡lises"
+  , "  remove <itemID> <qtd>      - remove quantidade específica"
+  , "  update <itemID> <q>        - atualiza quantidade para q (int)"
+  , "  list                       - lista inventário em memória"
+  , "  report                     - relatório completo de logs e análises"
   , "  exit                       - encerra o programa"
   ]
 
@@ -248,10 +248,10 @@ repl inv logs = do
 
 main :: IO ()
 main = do
-  putStrLn "Inicializando sistema de inventÃ¡rio..."
+  putStrLn "Inicializando sistema de inventário..."
   inv <- loadInventario
   logs <- loadLogs
-  putStrLn $ "InventÃ¡rio carregado: " ++ show (Map.size inv) ++ " itens."
+  putStrLn $ "Inventário carregado: " ++ show (Map.size inv) ++ " itens."
   putStrLn $ "Logs carregados: " ++ show (length logs)
   putStrLn "Digite 'ajuda' para ver comandos."
   repl inv logs
