@@ -42,8 +42,8 @@ removeItem tempo idItem qtd inv
           in if qtd > atual
                then Left "Erro: estoque insuficiente."
                else
-                 let it'    = it { quantidade = atual - qtd }
-                     inv'   = Map.insert idItem it' inv
+                 let it' = it { quantidade = atual - qtd }
+                     inv' = Map.insert idItem it' inv
                      logEnt = LogEntry tempo Remove
                                ("Removidas " ++ show qtd ++ " unidades do item " ++ idItem)
                                Sucesso
