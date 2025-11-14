@@ -4,6 +4,7 @@ module Main where
 
 import InventarioDados
 import qualified InventarioLogica as Logic
+import qualified InventarioAnalise as Analise
 
 import qualified Data.Map as Map
 import Data.Map (Map)
@@ -33,7 +34,7 @@ loadInventario = do
     handler e
       | isDoesNotExistError e = return "empty"
       | otherwise = return "empty"
-      
+
 -- funcao para carregar os logs de auditoria lidando com arquivos vazios e ignorando linhas corrompidas. Separa os dados por linha
 loadLogs :: IO [LogEntry]
 loadLogs = do
@@ -66,9 +67,9 @@ processCommand inv _lineLogs input =
     ("exit":_) -> do
       putStrLn "Saindo..."
       return inv
-    
+
     ("list":_) -> do
-      putStrLn "Inventário atual:"
+      putStrLn "InventÃ¡rio atual:"
       if Map.null inv
         then putStrLn "(vazio)"
         else mapM_ (printItem . snd) (Map.toList inv)
@@ -82,8 +83,8 @@ processCommand inv _lineLogs input =
       catg <- prompt "Categoria: "
       case readMaybe qtdS :: Maybe Int of
         Nothing -> do
-          putStrLn "Quantidade inválida."
-          let logE = LogEntry now Add ("Tentativa de adicionar com quantidade inválida: " ++ qtdS) (Falha "Quantidade inválida")
+          putStrLn "Quantidade invÃ¡lida."
+          let logE = LogEntry now Add ("Tentativa de adicionar com quantidade invÃ¡lida: " ++ qtdS) (Falha "Quantidade invÃ¡lida")
           appendLog logE
           return inv
         Just qtd -> do
@@ -104,11 +105,11 @@ processCommand inv _lineLogs input =
       (iID:qtdS:_) ->
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
-            putStrLn "Quantidade inválida. Uso: remover <itemID> [quantidade]"
+            putStrLn "Quantidade invÃ¡lida. Uso: remover <itemID> [quantidade]"
             now <- getCurrentTime
             appendLog (LogEntry now Remove
-                         ("Tentativa de remover com quantidade inválida: " ++ qtdS ++ " para ID=" ++ iID)
-                         (Falha "Quantidade inválida"))
+                         ("Tentativa de remover com quantidade invÃ¡lida: " ++ qtdS ++ " para ID=" ++ iID)
+                         (Falha "Quantidade invÃ¡lida"))
             return inv
           Just qtd -> do
             now <- getCurrentTime
@@ -129,8 +130,8 @@ processCommand inv _lineLogs input =
         now <- getCurrentTime
         case Map.lookup iID inv of
           Nothing -> do
-            putStrLn "Falha: item não encontrado."
-            let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID ++ " (não encontrado)") (Falha "Item não encontrado")
+            putStrLn "Falha: item nÃ£o encontrado."
+            let logE = LogEntry now Remove ("Falha ao remover ID=" ++ iID ++ " (nÃ£o encontrado)") (Falha "Item nÃ£o encontrado")
             appendLog logE
             return inv
           Just it -> do
@@ -153,8 +154,8 @@ processCommand inv _lineLogs input =
         now <- getCurrentTime
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
-            putStrLn "Quantidade inválida."
-            let logE = LogEntry now Update ("Tentativa de update com quantidade inválida: " ++ qtdS) (Falha "Quantidade inválida")
+            putStrLn "Quantidade invÃ¡lida."
+            let logE = LogEntry now Update ("Tentativa de update com quantidade invÃ¡lida: " ++ qtdS) (Falha "Quantidade invÃ¡lida")
             appendLog logE
             return inv
           Just novaQtd ->
@@ -170,17 +171,41 @@ processCommand inv _lineLogs input =
                 putStrLn "Quantidade atualizada com sucesso."
                 return novoInv
       _ -> putStrLn "Uso: atualizar <itemID> <novaQuantidade>" >> return inv
-      
+
     ("report":_) -> do
       logs <- loadLogs
-      putStrLn "=== Relatório básico ==="
+      putStrLn "\n=========================================="
+      putStrLn "===     RELATÃ“RIO DE AUDITORIA        ==="
+      putStrLn "==========================================\n"
+
       putStrLn $ "Total de entradas de log: " ++ show (length logs)
-      let erros = logsErro logs
-      putStrLn $ "Entradas de erro: " ++ show (length erros)
-      mapM_ printLogEntry erros
+
+      let erros = Analise.logsDeErro logs
+      putStrLn $ "\nTotal de operaÃ§Ãµes com erro: " ++ show (length erros)
+
+      when (not $ null erros) $ do
+        putStrLn "\n--- Detalhes dos Erros ---"
+        mapM_ printLogEntry erros
+
+      let historico = Analise.historicoPorItem logs
+      putStrLn $ "\n\nTotal de itens com movimentaÃ§Ã£o: " ++ show (Map.size historico)
+
+      when (Map.size historico > 0) $ do
+        putStrLn "\n--- HistÃ³rico de OperaÃ§Ãµes por Item ---"
+        mapM_ (printHistoricoItem) (Map.toList historico)
+
+      case Analise.itemMaisMovimentado logs of
+        Nothing -> putStrLn "\nNenhum item movimentado ainda."
+        Just (itemId, numOps) -> do
+          putStrLn $ "\n--- Item Mais Movimentado ---"
+          putStrLn $ "Item ID: " ++ itemId
+          putStrLn $ "NÃºmero de operaÃ§Ãµes: " ++ show numOps
+
+      putStrLn "\n==========================================\n"
       return inv
+
     _ -> putStrLn "Comando desconhecido. Digite 'ajuda' para ver comandos." >> return inv
-    
+
 -- formata uma linha simples em um item usando os getters itemID, nome, quantidade e categoria
 printItem :: Item -> IO ()
 printItem it = putStrLn $ itemID it ++ " | " ++ nome it ++ " | qtd: " ++ show (quantidade it) ++ " | cat: " ++ categoria it
@@ -189,27 +214,27 @@ printItem it = putStrLn $ itemID it ++ " | " ++ nome it ++ " | qtd: " ++ show (q
 printLogEntry :: LogEntry -> IO ()
 printLogEntry le = putStrLn $ show (timestamp le) ++ " - " ++ show (acao le) ++ " - " ++ detalhes le ++ " - " ++ show (status le)
 
--- funcao que filtra log entry que status é Falha _
-logsErro :: [LogEntry] -> [LogEntry]
-logsErro = filter isErro
-  where
-    isErro (LogEntry _ _ _ (Falha _)) = True
-    isErro _ = False
+-- exibe historico de um item especifico
+printHistoricoItem :: (String, [LogEntry]) -> IO ()
+printHistoricoItem (itemId, entries) = do
+  putStrLn $ "\nItem: " ++ itemId ++ " (" ++ show (length entries) ++ " operaÃ§Ãµes)"
+  mapM_ (\le -> putStrLn $ "  - " ++ show (acao le) ++ ": " ++ detalhes le ++ " [" ++ show (status le) ++ "]") entries
 
 -- Texto de ajuda
 textoAjuda :: String
 textoAjuda = unlines
-  [ "Comandos disponíveis:"
-  , "  help                           - mostra esta ajuda"
-  , "  add                            - adiciona um item (interativo)"
-  , "  remove <itemID>                - remove a quantidade informada e, caso seja omitida, remove todas as unidades"
-  , "  update <itemID> <quantity>     - atualiza quantidade (Int)"
-  , "  list                           - lista inventário em memória"
-  , "  report                         - relatório básico de logs (erros)"
-  , "  exit                           - encerra o programa"
+  [ "Comandos disponÃ­veis:"
+  , "  help                       - mostra esta ajuda"
+  , "  add                        - adiciona um item (interativo)"
+  , "  remove <itemID>            - remove item (totalmente)"
+  , "  remove <itemID> <qtd>      - remove quantidade especÃ­fica"
+  , "  update <itemID> <q>        - atualiza quantidade para q (Int)"
+  , "  list                       - lista inventÃ¡rio em memÃ³ria"
+  , "  report                     - relatÃ³rio completo de logs e anÃ¡lises"
+  , "  exit                       - encerra o programa"
   ]
 
--- repl é um loop recursivo que mantem o estado do inventario e le os comandos repetidas vezes
+-- repl e um loop recursivo que mantem o estado do inventario e le os comandos repetidas vezes
 repl :: Inventario -> [LogEntry] -> IO ()
 repl inv logs = do
   line <- prompt "inventario> "
@@ -223,10 +248,10 @@ repl inv logs = do
 
 main :: IO ()
 main = do
-  putStrLn "Inicializando sistema de inventário..."
+  putStrLn "Inicializando sistema de inventÃ¡rio..."
   inv <- loadInventario
   logs <- loadLogs
-  putStrLn $ "Inventário carregado: " ++ show (Map.size inv) ++ " itens."
+  putStrLn $ "InventÃ¡rio carregado: " ++ show (Map.size inv) ++ " itens."
   putStrLn $ "Logs carregados: " ++ show (length logs)
   putStrLn "Digite 'ajuda' para ver comandos."
   repl inv logs
