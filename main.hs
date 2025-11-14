@@ -224,7 +224,7 @@ printHistoricoItem (itemId, entries) = do
 textoAjuda :: String
 textoAjuda = unlines
   [ "Comandos disponíveis:"
-  , "  help                       - mostra esta ajuda"
+  , "  help                       - mostra os comandos disponíveis"
   , "  add                        - adiciona um item (interativo)"
   , "  remove <itemID>            - remove item (totalmente)"
   , "  remove <itemID> <qtd>      - remove quantidade específica"
