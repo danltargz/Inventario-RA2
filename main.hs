@@ -93,11 +93,11 @@ processCommand inv _lineLogs input =
     ("add":_) -> do
       now <- getCurrentTime
       iIDraw <- prompt "ID do item: "
-      nmRaw  <- prompt "Nome: "
-      qtdS   <- prompt "Quantidade: "
+      nmRaw <- prompt "Nome: "
+      qtdS <- prompt "Quantidade: "
       catRaw <- prompt "Categoria: "
       let iID = sanitizeId   iIDraw
-          nm  = sanitizeText nmRaw
+          nm = sanitizeText nmRaw
           catg = sanitizeText catRaw
       case readMaybe qtdS :: Maybe Int of
         Nothing -> do
