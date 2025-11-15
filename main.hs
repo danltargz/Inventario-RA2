@@ -79,7 +79,7 @@ processCommand inv _lineLogs input =
       now <- getCurrentTime
       iID <- prompt "ID do item: "
       nm  <- prompt "Nome: "
-      qtdS <- prompt "Quantidade (Int): "
+      qtdS <- prompt "Quantidade: "
       catg <- prompt "Categoria: "
       case readMaybe qtdS :: Maybe Int of
         Nothing -> do
@@ -225,9 +225,9 @@ textoAjuda :: String
 textoAjuda = unlines
   [ "Comandos disponíveis:"
   , "  help                       - mostra os comandos disponíveis"
-  , "  add                        - adiciona um item (interativo)"
+  , "  add                        - adiciona um item"
   , "  remove <itemID> <qtd>      - remove quantidade e, caso seja omitida a quantidade, remove a totalidade de itens"
-  , "  update <itemID> <q>        - atualiza quantidade (int)"
+  , "  update <itemID> <q>        - atualiza quantidade"
   , "  list                       - lista inventário em memória"
   , "  report                     - relatório completo de logs e análises"
   , "  exit                       - encerra o programa"
