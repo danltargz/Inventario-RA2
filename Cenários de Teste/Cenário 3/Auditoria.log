@@ -1,0 +1,12 @@
+LogEntry {timestamp = 2025-11-15 00:52:36.244650082 UTC, acao = Add, detalhes = "Item adicionado: Processador (ID: 1)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:53:04.232829964 UTC, acao = Add, detalhes = "Item adicionado: Mouse (ID: 2)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:53:26.731947949 UTC, acao = Add, detalhes = "Item adicionado: Monitor 24 polegadas (ID: 3)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:53:51.558814727 UTC, acao = Add, detalhes = "Item adicionado: Webcam HD (ID: 4)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:54:09.801645044 UTC, acao = Add, detalhes = "Item adicionado: Headset (ID: 5)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:54:26.954414891 UTC, acao = Add, detalhes = "Item adicionado: SSD 500GB (ID: 6)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:54:44.727785364 UTC, acao = Add, detalhes = "Item adicionado: Memoria RAM 8GB (ID: 7)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:55:06.169968849 UTC, acao = Add, detalhes = "Item adicionado: Placa de Video (ID: 8)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:55:19.340249479 UTC, acao = Add, detalhes = "Item adicionado: Fonte 600W (ID: 9)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:55:34.750068665 UTC, acao = Add, detalhes = "Item adicionado: Gabinete ATX (ID: 10)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:57:27.627640453 UTC, acao = Add, detalhes = "Item adicionado: Teclado (ID: 11)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:58:07.543248806 UTC, acao = Remove, detalhes = "Falha ao remover ID=11 qtd=15", status = Falha "Erro: estoque insuficiente."}

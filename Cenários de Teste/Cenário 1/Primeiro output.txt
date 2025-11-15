@@ -1,0 +1,37 @@
+[1 of 5] Compiling InventarioDados  ( InventarioDados.hs, InventarioDados.o )
+[2 of 5] Compiling InventarioAnalise ( InventarioAnalise.hs, InventarioAnalise.o )
+[3 of 5] Compiling InventarioLogica ( InventarioLogica.hs, InventarioLogica.o )
+[4 of 5] Compiling Main             ( main.hs, main.o )
+[5 of 5] Linking a.out
+Inicializando sistema de inventário...
+Inventário carregado: 0 itens.
+Logs carregados: 0
+Digite 'help' para ver comandos.
+inventario> help
+Comandos disponíveis:
+  help                       - mostra os comandos disponíveis
+  add                        - adiciona um item (interativo)
+  remove <itemID> <qtd>      - remove quantidade e, caso seja omitida a quantidade, remove a totalidade de itens
+  update <itemID> <q>        - atualiza quantidade
+  list                       - lista inventário em memória
+  report                     - relatório completo de logs e análises
+  exit                       - encerra o programa
+
+inventario> add
+ID do item: 1
+Nome: Teclado
+Quantidade: 15
+Categoria: Perifericos
+Item adicionado com sucesso.
+inventario> add
+ID do item: 2
+Nome: Mouse
+Quantidade: 25
+Categoria: Perifericos
+Item adicionado com sucesso.
+inventario> add
+ID do item: 3
+Nome: Monitor 24 polegadas
+Quantidade: 10
+Categoria: Monitores
+Item adicionado com sucesso.

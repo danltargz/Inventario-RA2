@@ -1,0 +1,1 @@
+fromList [("1",Item {itemID = "1", nome = "Teclado", quantidade = 15, categoria = "Perifericos"}),("2",Item {itemID = "2", nome = "Mouse", quantidade = 25, categoria = "Perifericos"}),("3",Item {itemID = "3", nome = "Monitor 24 polegadas", quantidade = 10, categoria = "Monitores"})]
