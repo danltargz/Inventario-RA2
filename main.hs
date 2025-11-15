@@ -15,12 +15,27 @@ import Control.Exception (catch, IOException, evaluate)
 import Text.Read (readMaybe)
 import Data.Maybe (catMaybes)
 import Control.Monad (when)
+import Data.Char (isSpace)  -- (adição) utilitário para sanitização
 
 inventarioFile :: FilePath
 inventarioFile = "Inventario.dat"
 
 auditoriaFile :: FilePath
 auditoriaFile = "Auditoria.log"
+
+-- utilitários de sanitização
+trim :: String -> String
+trim = f . f
+  where f = reverse . dropWhile isSpace
+
+collapseSpaces :: String -> String
+collapseSpaces = unwords . words
+
+sanitizeText :: String -> String
+sanitizeText = collapseSpaces . trim
+
+sanitizeId :: String -> String
+sanitizeId = filter (not . isSpace)
 
 -- função para carregar inventário do disco capturando exceções e lidando com elas para evitar falhas
 loadInventario :: IO Inventario
@@ -35,7 +50,7 @@ loadInventario = do
       | isDoesNotExistError e = return "empty"
       | otherwise = return "empty"
 
--- função para carregar os logs de auditoria lidando com arquivos vazios e ignorando linhas corrompidas. Separa os dados por linha
+-- função para carregar os logs de auditoria lidando com arquivos vazios e ignorando linhas corrompidas.
 loadLogs :: IO [LogEntry]
 loadLogs = do
   conteudo <- catch (readFile auditoriaFile) (\e -> if isDoesNotExistError e then return "" else return "")
@@ -77,10 +92,13 @@ processCommand inv _lineLogs input =
 
     ("add":_) -> do
       now <- getCurrentTime
-      iID <- prompt "ID do item: "
-      nm  <- prompt "Nome: "
-      qtdS <- prompt "Quantidade: "
-      catg <- prompt "Categoria: "
+      iIDraw <- prompt "ID do item: "
+      nmRaw  <- prompt "Nome: "
+      qtdS   <- prompt "Quantidade: "
+      catRaw <- prompt "Categoria: "
+      let iID = sanitizeId   iIDraw
+          nm  = sanitizeText nmRaw
+          catg = sanitizeText catRaw
       case readMaybe qtdS :: Maybe Int of
         Nothing -> do
           putStrLn "Quantidade inválida."
@@ -102,10 +120,11 @@ processCommand inv _lineLogs input =
               return novoInv
 
     ("remove":xs) -> case xs of
-      (iID:qtdS:_) ->
+      (iIDraw:qtdS:_) ->
+        let iID = sanitizeId iIDraw in
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
-            putStrLn "Quantidade inválida. Uso: remover <itemID> [quantidade]"
+            putStrLn "Quantidade inválida. Uso: remove <itemID> [quantidade]"
             now <- getCurrentTime
             appendLog (LogEntry now Remove
                          ("Tentativa de remover com quantidade inválida: " ++ qtdS ++ " para ID=" ++ iID)
@@ -126,7 +145,8 @@ processCommand inv _lineLogs input =
                 return novoInv
 
       -- remove tudo
-      (iID:_) -> do
+      (iIDraw:_) -> do
+        let iID = sanitizeId iIDraw
         now <- getCurrentTime
         case Map.lookup iID inv of
           Nothing -> do
@@ -147,10 +167,11 @@ processCommand inv _lineLogs input =
                 appendLog logE
                 putStrLn $ "Item removido (" ++ show qtd ++ " unidades)."
                 return novoInv
-      _ -> putStrLn "Uso: remover <itemID> [quantidade]" >> return inv
+      _ -> putStrLn "Uso: remove <itemID> [quantidade]" >> return inv
 
     ("update":xs) -> case xs of
-      (iID:qtdS:_) -> do
+      (iIDraw:qtdS:_) -> do
+        let iID = sanitizeId iIDraw
         now <- getCurrentTime
         case readMaybe qtdS :: Maybe Int of
           Nothing -> do
