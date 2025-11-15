@@ -1,0 +1,14 @@
+[1 of 5] Compiling InventarioDados  ( InventarioDados.hs, InventarioDados.o )
+[2 of 5] Compiling InventarioAnalise ( InventarioAnalise.hs, InventarioAnalise.o )
+[3 of 5] Compiling InventarioLogica ( InventarioLogica.hs, InventarioLogica.o )
+[4 of 5] Compiling Main             ( main.hs, main.o )
+[5 of 5] Linking a.out
+Inicializando sistema de inventário...
+Inventário carregado: 3 itens.
+Logs carregados: 3
+Digite 'help' para ver comandos.
+inventario> list
+Inventário atual:
+1 | Teclado | qtd: 15 | cat: Perifericos
+2 | Mouse | qtd: 25 | cat: Perifericos
+3 | Monitor 24 polegadas | qtd: 10 | cat: Monitores

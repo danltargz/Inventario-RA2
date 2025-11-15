@@ -1,0 +1,3 @@
+LogEntry {timestamp = 2025-11-15 00:37:24.547567403 UTC, acao = Add, detalhes = "Item adicionado: Teclado (ID: 1)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:37:33.068692341 UTC, acao = Add, detalhes = "Item adicionado: Mouse (ID: 2)", status = Sucesso}
+LogEntry {timestamp = 2025-11-15 00:37:46.299325283 UTC, acao = Add, detalhes = "Item adicionado: Monitor 24 polegadas (ID: 3)", status = Sucesso}

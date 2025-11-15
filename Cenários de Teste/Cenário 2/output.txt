@@ -1,0 +1,66 @@
+[1 of 5] Compiling InventarioDados  ( InventarioDados.hs, InventarioDados.o )
+[2 of 5] Compiling InventarioAnalise ( InventarioAnalise.hs, InventarioAnalise.o )
+[3 of 5] Compiling InventarioLogica ( InventarioLogica.hs, InventarioLogica.o )
+[4 of 5] Compiling Main             ( main.hs, main.o )
+[5 of 5] Linking a.out
+Inicializando sistema de inventário...
+Inventário carregado: 11 itens.
+Logs carregados: 12
+Digite 'help' para ver comandos.
+inventario> report
+
+==========================================
+===     RELATÓRIO DE AUDITORIA         ===
+==========================================
+
+Total de entradas de log: 12
+
+Total de operações com erro: 1
+
+--- Detalhes dos Erros ---
+2025-11-15 00:58:07.543248806 UTC - Remove - Falha ao remover ID=11 qtd=15 - Falha "Erro: estoque insuficiente."
+
+
+Total de itens com movimentação: 11
+
+--- Histórico de Operações por Item ---
+
+Item: 1 (1 operações)
+  - Add: Item adicionado: Processador (ID: 1) [Sucesso]
+
+Item: 10 (1 operações)
+  - Add: Item adicionado: Gabinete ATX (ID: 10) [Sucesso]
+
+Item: 11 (2 operações)
+  - Remove: Falha ao remover ID=11 qtd=15 [Falha "Erro: estoque insuficiente."]
+  - Add: Item adicionado: Teclado (ID: 11) [Sucesso]
+
+Item: 2 (1 operações)
+  - Add: Item adicionado: Mouse (ID: 2) [Sucesso]
+
+Item: 3 (1 operações)
+  - Add: Item adicionado: Monitor 24 polegadas (ID: 3) [Sucesso]
+
+Item: 4 (1 operações)
+  - Add: Item adicionado: Webcam HD (ID: 4) [Sucesso]
+
+Item: 5 (1 operações)
+  - Add: Item adicionado: Headset (ID: 5) [Sucesso]
+
+Item: 6 (1 operações)
+  - Add: Item adicionado: SSD 500GB (ID: 6) [Sucesso]
+
+Item: 7 (1 operações)
+  - Add: Item adicionado: Memoria RAM 8GB (ID: 7) [Sucesso]
+
+Item: 8 (1 operações)
+  - Add: Item adicionado: Placa de Video (ID: 8) [Sucesso]
+
+Item: 9 (1 operações)
+  - Add: Item adicionado: Fonte 600W (ID: 9) [Sucesso]
+
+--- Item Mais Movimentado ---
+Item ID: 11
+Número de operações: 2
+
+==========================================
