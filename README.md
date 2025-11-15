@@ -8,6 +8,8 @@
 
 **Grupo: 8 - Toda Disciplina**
 
+**Grupo: RA2 2**
+
 **Alunos:**
 - Danillo Gonçalves Camargo da Silva - [danltargz](https://github.com/danltargz) - Aluno 4
 - Guilherme Felippe Lazari - [Guilherme006](https://github.com/Guilherme006) - Aluno 1
