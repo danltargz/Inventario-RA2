@@ -15,7 +15,7 @@ import Control.Exception (catch, IOException, evaluate)
 import Text.Read (readMaybe)
 import Data.Maybe (catMaybes)
 import Control.Monad (when)
-import Data.Char (isSpace)  -- (adição) utilitário para sanitização
+import Data.Char (isSpace)
 
 inventarioFile :: FilePath
 inventarioFile = "Inventario.dat"
